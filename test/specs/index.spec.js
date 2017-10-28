@@ -49,24 +49,3 @@ test('should react to mediaQueries correctly', (t) => {
   triggerQueryChange('(min-width: 350px) and (max-width: 899px)', true)
   t.equal(component.$mq, 'md')
 })
-//
-// test('filter should transform values according to current breakpoint', (t) => {
-//   t.plan(2)
-//   Vue.use(plugin, {
-//     breakpoints: {
-//       sm: 350,
-//       md: 900,
-//       lg: 1300,
-//     }
-//   })
-//   const component = new Vue({
-//     template: '<span>{{ $mq | mq({ sm: "small", md: "medium", lg: "large"}) }}</span>'
-//   })
-//   component.$nextTick(() => {
-//     t.equal(component.$el.innerText, 'small')
-//     windowWidth = 500
-//     component.$nextTick(() => {
-//       t.equal(component.$el.innerText, 'medium')
-//     })
-//   })
-// })
