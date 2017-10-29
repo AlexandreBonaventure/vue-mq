@@ -60,6 +60,7 @@ new Vue({
     <h1>current: {{$mq}}</h1>
   `,
 })
+```
 
 #### Use `$mq` property with the mq filter
 Using the filter allow to build your responsive design in a declarative way. This can be very useful and elegant to pass down props to layout component. (eg: a grid system)
