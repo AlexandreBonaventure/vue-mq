@@ -7,8 +7,7 @@
   "scripts": {
     "test": "tape ./test/specs/*.spec.js -r ./test/setup.js | tap-spec",
     "example": "npx http-server .",
-    "build": "node build/build.js",
-    "deploy-gh": "node build/deploy-gh.js"
+    "build": "node build/build.js"
   },
   "author": "Alexandre Geissmann <alex@la-bonaventure.com>",
   "license": "MIT",
@@ -20,7 +19,6 @@
     "babel-preset-env": "^1.6.1",
     "babel-tape-runner": "^2.0.1",
     "browser-env": "^3.2.1",
-    "gh-pages": "^1.0.0",
     "http-server": "^0.10.0",
     "require-extension-hooks": "^0.3.2",
     "require-extension-hooks-babel": "^0.1.1",
