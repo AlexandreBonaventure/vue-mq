@@ -4,7 +4,7 @@ Define your breakpoints and build responsive design semantically and declarative
 _Use with `vue:  ^2.x.x`
 _
 
-**Demo**: [here]()
+**Demo**: [here](https://alexandrebonaventure.github.io/vue-mq/examples/)
 
 ## Table of Contents
 
@@ -98,4 +98,4 @@ Paul Irish: [matchMedia polyfill](https://github.com/paulirish/matchMedia.js)
 
 ## Support
 
-Please [open an issue](https://github.com/fraction/readme-boilerplate/issues/new) for support.
+Please [open an issue](https://github.com/AlexandreBonaventure/vue-mq/issues/new) for support.
