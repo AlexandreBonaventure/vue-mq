@@ -1,4 +1,4 @@
-import { convertBreakpointsToMediaQueries, transformValuesFromBreakpoints } from './src/helpers.js'
+import { convertBreakpointsToMediaQueries, transformValuesFromBreakpoints } from './helpers.js'
 
 const DEFAULT_BREAKPOINT = {
   sm: 450,

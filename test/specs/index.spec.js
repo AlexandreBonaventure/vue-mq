@@ -1,5 +1,5 @@
 import test from 'tape'
-import plugin from '../../index.js'
+import plugin from '../../src/index.js'
 import Vue from 'vue'
 
 let windowWidth = 200

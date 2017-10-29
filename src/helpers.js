@@ -4,13 +4,19 @@ export function convertBreakpointsToMediaQueries(breakpoints) {
   const keys = Object.keys(breakpoints)
   const breakpointValues = [0, ...Object.values(breakpoints).slice(0, -1)]
   const mediaQueries = breakpointValues.reduce((sum, value, index) => {
-    return {
-      ...sum,
-      [keys[index]]: json2mq({
+    const options = Object.assign(
+      {
         minWidth: value,
-        ...(index < keys.length - 1 ? { maxWidth: breakpointValues[index+1] - 1 } : {})
-      })
-    }
+      },
+      index < keys.length - 1 ? { maxWidth: breakpointValues[index+1] - 1 } : {}
+    )
+    const mediaQuery = json2mq(options)
+    return Object.assign(
+      sum,
+      {
+        [keys[index]]: mediaQuery,
+      }
+    )
   }, {})
   return mediaQueries
 }

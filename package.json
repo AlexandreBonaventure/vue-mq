@@ -1,13 +1,15 @@
 {
   "name": "vue-mq",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "Handle media queries easily & build responsive design with Vue",
+  "main": "dist/vue-mq.js",
+  "module": "dist/vue-mq.esm.js",
   "scripts": {
     "test": "tape ./test/specs/*.spec.js -r ./test/setup.js | tap-spec",
-    "example": "npx http-server ."
+    "example": "npx http-server .",
+    "build": "node build/build.js",
   },
-  "author": "",
+  "author": "Alexandre Geissmann <alex@la-bonaventure.com>",
   "license": "MIT",
   "dependencies": {
     "json2mq": "^0.2.0"
@@ -20,6 +22,7 @@
     "http-server": "^0.10.0",
     "require-extension-hooks": "^0.3.2",
     "require-extension-hooks-babel": "^0.1.1",
+    "rollup-make-bundles": "^1.0.8",
     "tap-spec": "^4.1.1",
     "tape": "^4.8.0",
     "vue": "^2.5.2"
