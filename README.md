@@ -93,6 +93,19 @@ new Vue({
 })
 ```
 
+#### MqLayout component
+In addition to `$mq` property this plugin provide a wrapper component to facilitate conditional rendering with media queries.
+
+**Usage**:
+```
+<mq-layout mq="lg">
+  <span> Display on large screen </span>
+</mq-layout>
+
+```
+**Props**
+mq => required | String
+
 ## Browser Support
 This plugin relies on matchMedia API to detect screensize change. So for older browsers and IE, you should polyfill this out:
 Paul Irish: [matchMedia polyfill](https://github.com/paulirish/matchMedia.js)

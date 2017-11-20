@@ -1,5 +1,5 @@
 import test from 'tape'
-import { convertBreakpointsToMediaQueries, transformValuesFromBreakpoints } from '../../src/helpers.js'
+import { convertBreakpointsToMediaQueries, transformValuesFromBreakpoints, selectBreakpoints } from '../../src/helpers.js'
 
 test('should transform breakpoints correctly', (t) => {
   t.plan(1)
@@ -44,4 +44,11 @@ test('transformValuesFromBreakpoints should return values with mobile-first over
   t.equal(result1, 1)
   const result2 = transformValuesFromBreakpoints(breakpoints, values, 'md')
   t.equal(result2, 1)
+})
+
+test('selectBreakpoints', (t) => {
+  t.plan(1)
+  const breakpoints = ['sm', 'md', 'lg']
+  const result = selectBreakpoints(breakpoints, 'md')
+  t.deepEqual(result, ['md', 'lg'])
 })

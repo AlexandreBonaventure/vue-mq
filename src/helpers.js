@@ -31,3 +31,8 @@ export function transformValuesFromBreakpoints(breakpoints, values, currentBreak
   const result = values[currentBreakpoint] || findClosestValue(currentBreakpoint)
   return result
 }
+
+export function selectBreakpoints(breakpoints, currentBreakpoint) {
+  const index = breakpoints.findIndex(b => b === currentBreakpoint)
+  return breakpoints.slice(index)
+}

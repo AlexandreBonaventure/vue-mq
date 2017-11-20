@@ -1,4 +1,5 @@
 import { convertBreakpointsToMediaQueries, transformValuesFromBreakpoints } from './helpers.js'
+import MqLayout from './component.js'
 
 const DEFAULT_BREAKPOINT = {
   sm: 450,
@@ -40,6 +41,8 @@ const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT } = {}) {
       },
     }
   })
+  Vue.prototype.$mqAvailableBreakpoints = breakpoints
+  Vue.component('MqLayout', MqLayout)
 }
 
 export default { install }
