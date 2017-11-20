@@ -99,12 +99,17 @@ In addition to `$mq` property this plugin provide a wrapper component to facilit
 **Usage**:
 ```
 <mq-layout mq="lg">
-  <span> Display on large screen </span>
+  <span> Display on lg </span>
+</mq-layout>
+<mq-layout mq="md+">
+  <span> Display on md and lg </span>
 </mq-layout>
 
 ```
 **Props**
 mq => required | String
+
+*Important*: note that you can append a `+` modifier at the end of the string to specify that the conditional rendering happens for all greater breakpoints.
 
 ## Browser Support
 This plugin relies on matchMedia API to detect screensize change. So for older browsers and IE, you should polyfill this out:
