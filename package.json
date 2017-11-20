@@ -10,6 +10,10 @@
     "build": "node build/build.js"
   },
   "author": "Alexandre Geissmann <alex@la-bonaventure.com>",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/AlexandreBonaventure/vue-mq"
+  },
   "license": "MIT",
   "dependencies": {
     "json2mq": "^0.2.0"
