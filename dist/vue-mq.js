@@ -126,6 +126,37 @@ function transformValuesFromBreakpoints(breakpoints, values, currentBreakpoint) 
   return result
 }
 
+function selectBreakpoints(breakpoints, currentBreakpoint) {
+  var index = breakpoints.findIndex(function (b) { return b === currentBreakpoint; });
+  return breakpoints.slice(index)
+}
+
+// USAGE
+// mq-layout(mq="lg")
+//   p I’m lg
+var component = {
+  props: {
+    mq: {
+      required: true,
+      type: String,
+    }
+  },
+  computed: {
+    plusModifier: function plusModifier() { return this.mq.slice(-1) === '+' },
+    activeBreakpoints: function activeBreakpoints() {
+      var breakpoints = Object.keys(this.$mqAvailableBreakpoints);
+      var mq = this.plusModifier ? this.mq.slice(0, -1) : this.mq;
+      return this.plusModifier
+        ? selectBreakpoints(breakpoints, mq)
+        : [this.mq]
+    }
+  },
+  render: function render(h, props) {
+    var shouldRenderChildren = this.activeBreakpoints.includes(this.$mq);
+    return shouldRenderChildren ? h('div', this.$slots.default) : h()
+  },
+};
+
 var DEFAULT_BREAKPOINT = {
   sm: 450,
   md: 1250,
@@ -171,6 +202,8 @@ var install = function (Vue, ref) {
       },
     }
   });
+  Vue.prototype.$mqAvailableBreakpoints = breakpoints;
+  Vue.component('MqLayout', component);
 };
 
 var index = { install: install };
