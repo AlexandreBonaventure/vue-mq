@@ -93,7 +93,8 @@ var index$1 = json2mq;
 
 function convertBreakpointsToMediaQueries(breakpoints) {
   var keys = Object.keys(breakpoints);
-  var breakpointValues = [0 ].concat( Object.values(breakpoints).slice(0, -1));
+  var values = keys.map(function (key) { return breakpoints[key]; });
+  var breakpointValues = [0 ].concat( values.slice(0, -1));
   var mediaQueries = breakpointValues.reduce(function (sum, value, index) {
     var options = Object_assign(
       {
