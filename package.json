@@ -7,7 +7,8 @@
   "scripts": {
     "test": "tape ./test/specs/*.spec.js -r ./test/setup.js | tap-spec",
     "example": "npx http-server .",
-    "build": "npx rimraf dist && bili"
+    "build": "npx rimraf dist && bili",
+    "release": "yarn test && yarn build && npx release-it"
   },
   "bili": {
     "moduleName": "vueMq",
