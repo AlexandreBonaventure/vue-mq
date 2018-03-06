@@ -1,6 +1,6 @@
 {
   "name": "vue-mq",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Handle media queries easily & build responsive design with Vue",
   "main": "dist/vue-mq.js",
   "module": "dist/vue-mq.es.js",
@@ -8,11 +8,16 @@
     "test": "tape ./test/specs/*.spec.js -r ./test/setup.js | tap-spec",
     "example": "npx http-server .",
     "build": "npx rimraf dist && bili",
-    "release": "yarn test && yarn build && npx release-it"
+    "release": "yarn test && yarn build && npx release-it --no-requireCleanWorkingDir"
   },
   "bili": {
     "moduleName": "vueMq",
-    "format": ["cjs","umd","umd-min", "es"],
+    "format": [
+      "cjs",
+      "umd",
+      "umd-min",
+      "es"
+    ],
     "external": "vue"
   },
   "author": "Alexandre Geissmann <alex@la-bonaventure.com>",
