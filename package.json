@@ -27,13 +27,13 @@
   },
   "license": "MIT",
   "dependencies": {
-    "bili": "^3.0.3",
     "json2mq": "^0.2.0"
   },
   "devDependencies": {
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-tape-runner": "^2.0.1",
+    "bili": "^3.0.3",
     "browser-env": "^3.2.1",
     "http-server": "^0.10.0",
     "require-extension-hooks": "^0.3.2",
