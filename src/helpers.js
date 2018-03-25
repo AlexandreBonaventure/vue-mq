@@ -24,13 +24,13 @@ export function convertBreakpointsToMediaQueries(breakpoints) {
 
 export function transformValuesFromBreakpoints(breakpoints, values, currentBreakpoint) {
   const findClosestValue = (currentBreakpoint) => {
+    if (values[currentBreakpoint] !== undefined) return values[currentBreakpoint]
     const index = breakpoints.findIndex(b => b === currentBreakpoint)
     const newBreakpoint = index !== -1 || index !== 0 ? breakpoints[index-1] : null
     if (!newBreakpoint) return values[index]
-    return values[newBreakpoint] || findClosestValue(newBreakpoint)
+    return values[newBreakpoint] !== undefined ? values[newBreakpoint] : findClosestValue(newBreakpoint)
   }
-  const result = values[currentBreakpoint] || findClosestValue(currentBreakpoint)
-  return result
+  return findClosestValue(currentBreakpoint)
 }
 
 export function selectBreakpoints(breakpoints, currentBreakpoint) {

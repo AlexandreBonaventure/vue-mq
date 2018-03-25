@@ -46,6 +46,19 @@ test('transformValuesFromBreakpoints should return values with mobile-first over
   t.equal(result2, 1)
 })
 
+test('transformValuesFromBreakpoints should work with falsy values', (t) => {
+  t.plan(2)
+  const breakpoints = ['sm', 'md', 'lg']
+  const values = {
+    sm: false,
+    lg: true,
+  }
+  const result1 = transformValuesFromBreakpoints(breakpoints, values, 'sm')
+  t.equal(result1, false)
+  const result2 = transformValuesFromBreakpoints(breakpoints, values, 'md')
+  t.equal(result2, false)
+})
+
 test('selectBreakpoints', (t) => {
   t.plan(1)
   const breakpoints = ['sm', 'md', 'lg']
