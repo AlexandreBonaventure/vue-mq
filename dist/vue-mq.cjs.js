@@ -48,16 +48,16 @@ function convertBreakpointsToMediaQueries(breakpoints) {
 }
 function transformValuesFromBreakpoints(breakpoints, values, currentBreakpoint) {
   var findClosestValue = function findClosestValue(currentBreakpoint) {
+    if (values[currentBreakpoint] !== undefined) return values[currentBreakpoint];
     var index = breakpoints.findIndex(function (b) {
       return b === currentBreakpoint;
     });
     var newBreakpoint = index !== -1 || index !== 0 ? breakpoints[index - 1] : null;
     if (!newBreakpoint) return values[index];
-    return values[newBreakpoint] || findClosestValue(newBreakpoint);
+    return values[newBreakpoint] !== undefined ? values[newBreakpoint] : findClosestValue(newBreakpoint);
   };
 
-  var result = values[currentBreakpoint] || findClosestValue(currentBreakpoint);
-  return result;
+  return findClosestValue(currentBreakpoint);
 }
 function selectBreakpoints(breakpoints, currentBreakpoint) {
   var index = breakpoints.findIndex(function (b) {
