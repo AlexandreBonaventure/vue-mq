@@ -18,6 +18,9 @@ new Vue({
         <mq-layout mq="md+">
           <prism language="html" code="&lt;mq-layout mq=&quot;md+&quot;&gt; md and larger &lt;/mq-layout&gt;"/>
         </mq-layout>
+        <mq-layout mq="sm,lg">
+          <prism language="html" code="&lt;mq-layout mq=&quot;sm,lg&quot;&gt; sm and lg &lt;/mq-layout&gt;"/>
+        </mq-layout>
       </div>
     </div>
   `,
