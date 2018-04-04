@@ -16,7 +16,7 @@ const component = {
       const mq = this.plusModifier ? this.mq.slice(0, -1) : this.mq
       return this.plusModifier
         ? selectBreakpoints(breakpoints, mq)
-        : [this.mq]
+        : this.mq.split(',').map(bp => bp.trim())
     }
   },
   render(h, props) {
