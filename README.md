@@ -4,7 +4,7 @@ Define your breakpoints and build responsive design semantically and declarative
 _Use with `vue:  ^2.x.x`
 _
 
-**Demo**: [here](https://alexandrebonaventure.github.io/vue-mq/examples/)
+**Demo**: [here](https://alexandrebonaventure.github.io/vue-mq)
 
 ## Table of Contents
 
