@@ -126,6 +126,10 @@ function selectBreakpoints(breakpoints, currentBreakpoint) {
   return breakpoints.slice(index);
 }
 
+function isArray(arg) {
+  return Object.prototype.toString.call(arg) === '[object Array]';
+}
+
 // USAGE
 // mq-layout(mq="lg")
 //   p I’m lg
@@ -133,17 +137,17 @@ var component = {
   props: {
     mq: {
       required: true,
-      type: String
+      type: [String, Array]
     }
   },
   computed: {
     plusModifier: function plusModifier() {
-      return this.mq.slice(-1) === '+';
+      return !isArray(this.mq) && this.mq.slice(-1) === '+';
     },
     activeBreakpoints: function activeBreakpoints() {
       var breakpoints = Object.keys(this.$mqAvailableBreakpoints);
-      var mq = this.plusModifier ? this.mq.slice(0, -1) : this.mq;
-      return this.plusModifier ? selectBreakpoints(breakpoints, mq) : [this.mq];
+      var mq = this.plusModifier ? this.mq.slice(0, -1) : isArray(this.mq) ? this.mq : [this.mq];
+      return this.plusModifier ? selectBreakpoints(breakpoints, mq) : mq;
     }
   },
   render: function render(h, props) {

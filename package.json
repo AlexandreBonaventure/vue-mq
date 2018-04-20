@@ -1,6 +1,6 @@
 {
   "name": "vue-mq",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Handle media queries easily & build responsive design with Vue",
   "main": "dist/vue-mq.js",
   "module": "dist/vue-mq.es.js",
@@ -11,7 +11,7 @@
     "prepublishOnly": "yarn deploy:gh-pages",
     "deploy:gh-pages": "yarn build:example && yarn gh-pages -d examples/dist",
     "build": "npx rimraf dist && bili",
-    "release": "yarn test && yarn build && npx release-it"
+    "release": "yarn test && yarn build && npx release-it --no-requireCleanWorkingDir"
   },
   "bili": {
     "moduleName": "vueMq",
