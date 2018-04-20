@@ -29,7 +29,7 @@
     "html": {
       "template": "examples/index.html"
     },
-    "homepage": "/vue-mq/"
+    "publicPath": "/vue-mq/"
   },
   "author": "Alexandre Geissmann <alex@la-bonaventure.com>",
   "repository": {
