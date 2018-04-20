@@ -6,9 +6,12 @@
   "module": "dist/vue-mq.es.js",
   "scripts": {
     "test": "tape ./test/specs/*.spec.js -r ./test/setup.js | tap-spec",
-    "example": "npx http-server .",
+    "example": "poi",
+    "build:example": "poi build",
+    "prepublishOnly": "yarn deploy:gh-pages",
+    "deploy:gh-pages": "yarn build:example && yarn gh-pages -d examples/dist",
     "build": "npx rimraf dist && bili",
-    "release": "yarn test && yarn build && npx release-it --no-requireCleanWorkingDir"
+    "release": "yarn test && yarn build && npx release-it"
   },
   "bili": {
     "moduleName": "vueMq",
@@ -19,6 +22,14 @@
       "es"
     ],
     "external": "vue"
+  },
+  "poi": {
+    "entry": "examples/index.js",
+    "dist": "examples/dist",
+    "html": {
+      "template": "examples/index.html"
+    },
+    "homepage": "/vue-mq/"
   },
   "author": "Alexandre Geissmann <alex@la-bonaventure.com>",
   "repository": {
@@ -35,12 +46,11 @@
     "babel-tape-runner": "^2.0.1",
     "bili": "^3.0.3",
     "browser-env": "^3.2.1",
-    "http-server": "^0.10.0",
+    "gh-pages": "^1.1.0",
+    "poi": "^10.1.2",
     "require-extension-hooks": "^0.3.2",
     "require-extension-hooks-babel": "^0.1.1",
-    "rollup-make-bundles": "^1.0.8",
     "tap-spec": "^4.1.1",
-    "tape": "^4.8.0",
-    "vue": "^2.5.2"
+    "tape": "^4.8.0"
   }
 }

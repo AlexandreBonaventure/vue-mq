@@ -102,12 +102,14 @@ In addition to `$mq` property this plugin provide a wrapper component to facilit
   <span> Display on lg </span>
 </mq-layout>
 <mq-layout mq="md+">
-  <span> Display on md and lg </span>
+  <span> Display on md and larger </span>
 </mq-layout>
-
+<mq-layout mq="['sm', 'lg']">
+  <span> Display on sm and lg </span>
+</mq-layout>
 ```
 **Props**
-mq => required | String
+mq => required : String | Array
 
 *Important*: note that you can append a `+` modifier at the end of the string to specify that the conditional rendering happens for all greater breakpoints.
 
