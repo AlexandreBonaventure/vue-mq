@@ -104,7 +104,7 @@ In addition to `$mq` property this plugin provide a wrapper component to facilit
 <mq-layout mq="md+">
   <span> Display on md and larger </span>
 </mq-layout>
-<mq-layout mq="['sm', 'lg']">
+<mq-layout :mq="['sm', 'lg']">
   <span> Display on sm and lg </span>
 </mq-layout>
 ```
