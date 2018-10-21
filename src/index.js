@@ -12,24 +12,25 @@ const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT } = {}) {
   const reactorComponent = new Vue({
     data: () => ({
       currentBreakpoint: null,
-    })
-  })
+    }),
+    created() {
+      const mediaQueries = convertBreakpointsToMediaQueries(breakpoints)
+      Object.keys(mediaQueries).map((key) => {
+        const mediaQuery = mediaQueries[key]
+        const enter = () => { this.currentBreakpoint = key }
+        _subscribeToMediaQuery(mediaQuery, enter)
+      })
 
-  const mediaQueries = convertBreakpointsToMediaQueries(breakpoints)
-  Object.keys(mediaQueries).map((key) => {
-    const mediaQuery = mediaQueries[key]
-    const enter = () => { reactorComponent.currentBreakpoint = key }
-    _subscribeToMediaQuery(mediaQuery, enter)
-  })
-
-  function _subscribeToMediaQuery(mediaQuery, enter) {
-    const mql = window.matchMedia(mediaQuery)
-    const cb = ({ matches }) => {
-      if (matches) enter()
+      function _subscribeToMediaQuery(mediaQuery, enter) {
+        const mql = window.matchMedia(mediaQuery)
+        const cb = ({ matches }) => {
+          if (matches) enter()
+        }
+        mql.addListener(cb) //subscribing
+        cb(mql) //initial trigger
+      }
     }
-    mql.addListener(cb) //subscribing
-    cb(mql) //initial trigger
-  }
+  })
 
   Vue.filter('mq', (currentBreakpoint, values) => {
     return transformValuesFromBreakpoints(Object.keys(breakpoints), values, currentBreakpoint)

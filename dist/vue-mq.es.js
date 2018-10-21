@@ -16,13 +16,23 @@ function _defineProperty(obj, key, value) {
 }
 
 function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _arrayWithoutHoles(arr) {
   if (Array.isArray(arr)) {
     for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
 
     return arr2;
-  } else {
-    return Array.from(arr);
   }
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
 }
 
 function convertBreakpointsToMediaQueries(breakpoints) {
@@ -67,8 +77,6 @@ function isArray(arg) {
 }
 
 // USAGE
-// mq-layout(mq="lg")
-//   p I’m lg
 var component = {
   props: {
     mq: {
@@ -109,32 +117,35 @@ var install = function install(Vue) {
       return {
         currentBreakpoint: null
       };
+    },
+    created: function created() {
+      var _this = this;
+
+      var mediaQueries = convertBreakpointsToMediaQueries(breakpoints);
+      Object.keys(mediaQueries).map(function (key) {
+        var mediaQuery = mediaQueries[key];
+
+        var enter = function enter() {
+          _this.currentBreakpoint = key;
+        };
+
+        _subscribeToMediaQuery(mediaQuery, enter);
+      });
+
+      function _subscribeToMediaQuery(mediaQuery, enter) {
+        var mql = window.matchMedia(mediaQuery);
+
+        var cb = function cb(_ref2) {
+          var matches = _ref2.matches;
+          if (matches) enter();
+        };
+
+        mql.addListener(cb); //subscribing
+
+        cb(mql); //initial trigger
+      }
     }
   });
-  var mediaQueries = convertBreakpointsToMediaQueries(breakpoints);
-  Object.keys(mediaQueries).map(function (key) {
-    var mediaQuery = mediaQueries[key];
-
-    var enter = function enter() {
-      reactorComponent.currentBreakpoint = key;
-    };
-
-    _subscribeToMediaQuery(mediaQuery, enter);
-  });
-
-  function _subscribeToMediaQuery(mediaQuery, enter) {
-    var mql = window.matchMedia(mediaQuery);
-
-    var cb = function cb(_ref2) {
-      var matches = _ref2.matches;
-      if (matches) enter();
-    };
-
-    mql.addListener(cb); //subscribing
-
-    cb(mql); //initial trigger
-  }
-
   Vue.filter('mq', function (currentBreakpoint, values) {
     return transformValuesFromBreakpoints(Object.keys(breakpoints), values, currentBreakpoint);
   });
