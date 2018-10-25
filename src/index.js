@@ -20,7 +20,7 @@ const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT } = {}) {
    */
   if (typeof window === 'undefined') {
     // node stuff
-    reactorComponent.currentBreakpoint = smallestBreakPoint(breakpoints)
+    reactorComponent.currentBreakpoint = _smallestBreakpoint(breakpoints)
   } else {
     const mediaQueries = convertBreakpointsToMediaQueries(breakpoints)
     Object.keys(mediaQueries).map((key) => {
@@ -39,8 +39,8 @@ const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT } = {}) {
     cb(mql) //initial trigger
   }
 
-  const smallestBreakpoint = (breakpoints) => {
-    let arr = Object.values(breakpoints);
+  function _smallestBreakpoint(breakpoints) {
+    const arr = Object.keys(breakpoints).map(key => breakpoints[key]);
     return Math.min(...arr);
   }
 

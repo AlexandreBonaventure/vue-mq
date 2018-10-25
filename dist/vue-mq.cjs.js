@@ -121,7 +121,7 @@ var install = function install(Vue) {
 
   if (typeof window === 'undefined') {
     // node stuff
-    reactorComponent.currentBreakpoint = smallestBreakPoint(breakpoints);
+    reactorComponent.currentBreakpoint = _smallestBreakpoint(breakpoints);
   } else {
     var mediaQueries = convertBreakpointsToMediaQueries(breakpoints);
     Object.keys(mediaQueries).map(function (key) {
@@ -146,6 +146,13 @@ var install = function install(Vue) {
     mql.addListener(cb); //subscribing
 
     cb(mql); //initial trigger
+  }
+
+  function _smallestBreakpoint(breakpoints) {
+    var arr = Object.keys(breakpoints).map(function (key) {
+      return breakpoints[key];
+    });
+    return Math.min.apply(Math, _toConsumableArray(arr));
   }
 
   Vue.filter('mq', function (currentBreakpoint, values) {
