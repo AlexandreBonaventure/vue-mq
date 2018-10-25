@@ -175,16 +175,25 @@ var install = function install(Vue) {
       };
     }
   });
-  var mediaQueries = convertBreakpointsToMediaQueries(breakpoints);
-  Object.keys(mediaQueries).map(function (key) {
-    var mediaQuery = mediaQueries[key];
+  /**
+   * SSR support, if window is not definded, set the smallest breakpoint as default
+   */
 
-    var enter = function enter() {
-      reactorComponent.currentBreakpoint = key;
-    };
+  if (typeof window === 'undefined') {
+    // node stuff
+    reactorComponent.currentBreakpoint = smallestBreakPoint(breakpoints);
+  } else {
+    var mediaQueries = convertBreakpointsToMediaQueries(breakpoints);
+    Object.keys(mediaQueries).map(function (key) {
+      var mediaQuery = mediaQueries[key];
 
-    _subscribeToMediaQuery(mediaQuery, enter);
-  });
+      var enter = function enter() {
+        reactorComponent.currentBreakpoint = key;
+      };
+
+      _subscribeToMediaQuery(mediaQuery, enter);
+    });
+  }
 
   function _subscribeToMediaQuery(mediaQuery, enter) {
     var mql = window.matchMedia(mediaQuery);
