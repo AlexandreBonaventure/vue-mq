@@ -1,51 +1,27 @@
-import test from 'tape'
 import plugin from '../../src/index.js'
 import Vue from 'vue'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
 
-let windowWidth = 200
-const subscribers = {}
-window.matchMedia = (query) => {
-  const queryMap = {
-    '(min-width: 0px) and (max-width: 349px)': () => windowWidth < 350,
-    '(min-width: 350px) and (max-width: 899px)': () => windowWidth < 900 && windowWidth >= 350,
-    '(min-width: 900px)': () => windowWidth >= 900,
-  }
-
-  const queryValue = queryMap[query];
-  const matches = queryValue ? queryValue() : false;
+window.matchMedia = jest.fn((query) => {
   return {
-    matches,
-    addListener(cb) {
-      subscribers[query] = subscribers[query] || []
-      subscribers[query].push(cb)
-    },
+    matches: true,
+    addListener(cb) {},
     removeListener: () => {}
   }
+})
+const generateVueWithPlugin = (options) => {
+  const localVue = createLocalVue()
+  localVue.use(plugin, options)
+  return localVue
 }
 
-function triggerQueryChange(query, matches) {
-  subscribers[query].forEach(cb => cb({ matches }))
-}
-
-Vue.use(plugin, {
-  breakpoints: {
-    sm: 350,
-    md: 900,
-    lg: Infinity,
-  }
-})
-
-test('should register $mq property', (t) => {
-  t.plan(1)
-  const component = new Vue()
-  const result = '$mq' in component
-  t.ok(result)
-})
-
-test('should react to mediaQueries correctly', (t) => {
-  t.plan(2)
-  const component = new Vue()
-  t.equal(component.$mq, 'sm')
-  triggerQueryChange('(min-width: 350px) and (max-width: 899px)', true)
-  t.equal(component.$mq, 'md')
+describe('index.js', () => {
+  test('should register $mq property', () => {
+    const wrapper = shallowMount({ render(h) { return h('div') } }, { localVue: generateVueWithPlugin() })
+    expect('$mq' in wrapper.vm).toBe(true)
+  })
+  test('should default to defaultBreakpoint in options', () => {
+    const wrapper = shallowMount({ render(h) { return h('div') } }, { localVue: generateVueWithPlugin({ defaultBreakpoint: 'md' }) })
+    expect(wrapper.vm.$mq).toBe('md')
+  })
 })

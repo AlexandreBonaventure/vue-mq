@@ -1,4 +1,4 @@
-import { convertBreakpointsToMediaQueries, transformValuesFromBreakpoints } from './helpers.js'
+import { setupListeners, convertBreakpointsToMediaQueries, transformValuesFromBreakpoints } from './helpers.js'
 import MqLayout from './component.js'
 
 const DEFAULT_BREAKPOINT = {
@@ -7,30 +7,14 @@ const DEFAULT_BREAKPOINT = {
   lg: Infinity,
 }
 
-const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT } = {}) {
+const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT, defaultBreakpoint = 'sm' } = {}) {
+  let hasSetupListeners = false
   // Init reactive component
   const reactorComponent = new Vue({
     data: () => ({
-      currentBreakpoint: null,
+      currentBreakpoint: defaultBreakpoint,
     })
   })
-
-  const mediaQueries = convertBreakpointsToMediaQueries(breakpoints)
-  Object.keys(mediaQueries).map((key) => {
-    const mediaQuery = mediaQueries[key]
-    const enter = () => { reactorComponent.currentBreakpoint = key }
-    _subscribeToMediaQuery(mediaQuery, enter)
-  })
-
-  function _subscribeToMediaQuery(mediaQuery, enter) {
-    const mql = window.matchMedia(mediaQuery)
-    const cb = ({ matches }) => {
-      if (matches) enter()
-    }
-    mql.addListener(cb) //subscribing
-    cb(mql) //initial trigger
-  }
-
   Vue.filter('mq', (currentBreakpoint, values) => {
     return transformValuesFromBreakpoints(Object.keys(breakpoints), values, currentBreakpoint)
   })
@@ -39,6 +23,13 @@ const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT } = {}) {
       $mq() {
         return reactorComponent.currentBreakpoint
       },
+    },
+    beforeMount() {
+      if (!hasSetupListeners) {
+        const mediaQueries = convertBreakpointsToMediaQueries(breakpoints)
+        setupListeners(mediaQueries)
+        hasSetupListeners = true
+      }
     }
   })
   Vue.prototype.$mqAvailableBreakpoints = breakpoints
