@@ -61,6 +61,18 @@ function selectBreakpoints(breakpoints, currentBreakpoint) {
   });
   return breakpoints.slice(index);
 }
+function subscribeToMediaQuery(mediaQuery, enter) {
+  var mql = window.matchMedia(mediaQuery);
+
+  var cb = function cb(_ref) {
+    var matches = _ref.matches;
+    if (matches) enter();
+  };
+
+  mql.addListener(cb); //subscribing
+
+  cb(mql); //initial trigger
+}
 
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
@@ -101,40 +113,19 @@ var DEFAULT_BREAKPOINT = {
 var install = function install(Vue) {
   var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
       _ref$breakpoints = _ref.breakpoints,
-      breakpoints = _ref$breakpoints === void 0 ? DEFAULT_BREAKPOINT : _ref$breakpoints;
+      breakpoints = _ref$breakpoints === void 0 ? DEFAULT_BREAKPOINT : _ref$breakpoints,
+      _ref$defaultBreakpoin = _ref.defaultBreakpoint,
+      defaultBreakpoint = _ref$defaultBreakpoin === void 0 ? 'sm' : _ref$defaultBreakpoin;
 
-  // Init reactive component
+  var hasSetupListeners = false; // Init reactive component
+
   var reactorComponent = new Vue({
     data: function data() {
       return {
-        currentBreakpoint: null
+        currentBreakpoint: defaultBreakpoint
       };
     }
   });
-  var mediaQueries = convertBreakpointsToMediaQueries(breakpoints);
-  Object.keys(mediaQueries).map(function (key) {
-    var mediaQuery = mediaQueries[key];
-
-    var enter = function enter() {
-      reactorComponent.currentBreakpoint = key;
-    };
-
-    _subscribeToMediaQuery(mediaQuery, enter);
-  });
-
-  function _subscribeToMediaQuery(mediaQuery, enter) {
-    var mql = window.matchMedia(mediaQuery);
-
-    var cb = function cb(_ref2) {
-      var matches = _ref2.matches;
-      if (matches) enter();
-    };
-
-    mql.addListener(cb); //subscribing
-
-    cb(mql); //initial trigger
-  }
-
   Vue.filter('mq', function (currentBreakpoint, values) {
     return transformValuesFromBreakpoints(Object.keys(breakpoints), values, currentBreakpoint);
   });
@@ -142,6 +133,27 @@ var install = function install(Vue) {
     computed: {
       $mq: function $mq() {
         return reactorComponent.currentBreakpoint;
+      }
+    },
+    beforeMount: function beforeMount() {
+      if (!hasSetupListeners) {
+        var mediaQueries = convertBreakpointsToMediaQueries(breakpoints); // setup listeners
+
+        var _loop = function _loop(key) {
+          var mediaQuery = mediaQueries[key];
+
+          var enter = function enter() {
+            reactorComponent.currentBreakpoint = key;
+          };
+
+          subscribeToMediaQuery(mediaQuery, enter);
+        };
+
+        for (var key in mediaQueries) {
+          _loop(key);
+        }
+
+        hasSetupListeners = true;
       }
     }
   });
