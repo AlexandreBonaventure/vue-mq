@@ -199,7 +199,10 @@ var install = function install(Vue) {
         return reactorComponent.currentBreakpoint;
       }
     },
-    beforeMount: function beforeMount() {
+    created: function created() {
+      if (this.$isServer) reactorComponent.currentBreakpoint = defaultBreakpoint;
+    },
+    mounted: function mounted() {
       if (!hasSetupListeners) {
         var mediaQueries = convertBreakpointsToMediaQueries(breakpoints); // setup listeners
 
