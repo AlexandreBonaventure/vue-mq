@@ -1,51 +1,48 @@
-import test from 'tape'
 import plugin from '../../src/index.js'
 import Vue from 'vue'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
+import MatchMediaMock from 'match-media-mock'
 
-let windowWidth = 200
-const subscribers = {}
-window.matchMedia = (query) => {
-  const queryMap = {
-    '(min-width: 0px) and (max-width: 349px)': () => windowWidth < 350,
-    '(min-width: 350px) and (max-width: 899px)': () => windowWidth < 900 && windowWidth >= 350,
-    '(min-width: 900px)': () => windowWidth >= 900,
-  }
-
-  const queryValue = queryMap[query];
-  const matches = queryValue ? queryValue() : false;
-  return {
-    matches,
-    addListener(cb) {
-      subscribers[query] = subscribers[query] || []
-      subscribers[query].push(cb)
-    },
-    removeListener: () => {}
-  }
+const localVueFactory = (options) => {
+  const localVue = createLocalVue()
+  localVue.use(plugin, options)
+  return localVue
 }
 
-function triggerQueryChange(query, matches) {
-  subscribers[query].forEach(cb => cb({ matches }))
-}
-
-Vue.use(plugin, {
-  breakpoints: {
-    sm: 350,
-    md: 900,
-    lg: Infinity,
-  }
-})
-
-test('should register $mq property', (t) => {
-  t.plan(1)
-  const component = new Vue()
-  const result = '$mq' in component
-  t.ok(result)
-})
-
-test('should react to mediaQueries correctly', (t) => {
-  t.plan(2)
-  const component = new Vue()
-  t.equal(component.$mq, 'sm')
-  triggerQueryChange('(min-width: 350px) and (max-width: 899px)', true)
-  t.equal(component.$mq, 'md')
+describe('index.js', () => {
+  let results
+  let matchMediaMock  
+  beforeEach(() => {
+    results = new Set()
+    matchMediaMock = MatchMediaMock.create()
+    matchMediaMock.setConfig({type: 'screen', width: 1200})
+    window.matchMedia = jest.fn((query) => {
+      const result = matchMediaMock(query)
+      results.add(result)
+      return result
+    })
+  })
+  test('should register $mq property', () => {
+    const wrapper = shallowMount({ render(h) { return h('div') } }, { localVue: localVueFactory() })
+    expect('$mq' in wrapper.vm).toBe(true)
+  })
+  test('should default to defaultBreakpoint in options', () => {
+    const localVue = localVueFactory({ defaultBreakpoint: 'md' })
+    const vm = new localVue({ 
+      render(h) { return h('div') } 
+    })
+    expect(vm.$mq).toBe('md')
+  })
+  test('should subscribe to media queries', () => {
+    const wrapper = shallowMount({ render(h) { return h('div') } }, { localVue: localVueFactory() })
+    expect(window.matchMedia).toBeCalledWith('(min-width: 1250px)')
+    expect(window.matchMedia).toBeCalledWith('(min-width: 450px) and (max-width: 1249px)')
+    expect(window.matchMedia).toBeCalledWith('(min-width: 0px) and (max-width: 449px)')
+  })
+  test('should set $mq accordingly when media query change', () => {
+    const wrapper = shallowMount({ render(h) { return h('div') } }, { localVue: localVueFactory() })
+    matchMediaMock.setConfig({type: 'screen', width: 700})
+    Array.from(results)[1].callListeners()
+    expect(wrapper.vm.$mq).toBe('md')
+  })
 })

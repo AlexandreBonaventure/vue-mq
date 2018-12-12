@@ -37,3 +37,12 @@ export function selectBreakpoints(breakpoints, currentBreakpoint) {
   const index = breakpoints.findIndex(b => b === currentBreakpoint)
   return breakpoints.slice(index)
 }
+
+export function subscribeToMediaQuery(mediaQuery, enter) {
+  const mql = window.matchMedia(mediaQuery)
+  const cb = ({ matches }) => {
+    if (matches) enter()
+  }
+  mql.addListener(cb) //subscribing
+  cb(mql) //initial trigger
+}
