@@ -7,7 +7,7 @@ const DEFAULT_BREAKPOINT = {
   lg: Infinity,
 }
 
-const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT, defaultBreakpoint = 'sm' } = {}) {
+const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT, defaultBreakpoint = 'sm' } = {}) {  
   let hasSetupListeners = false
   // Init reactive component
   const reactorComponent = new Vue({
@@ -24,7 +24,10 @@ const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT, defaultBreakp
         return reactorComponent.currentBreakpoint
       },
     },
-    beforeMount() {
+    created () {
+      if (this.$isServer) reactorComponent.currentBreakpoint = defaultBreakpoint
+    },
+    mounted() {
       if (!hasSetupListeners) {
         const mediaQueries = convertBreakpointsToMediaQueries(breakpoints)
         // setup listeners
