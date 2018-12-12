@@ -45,6 +45,7 @@
     "bili": "^3.0.3",
     "browser-env": "^3.2.1",
     "gh-pages": "^1.1.0",
+    "match-media-mock": "^0.1.1",
     "poi": "^10.1.2",
     "tyu": "1.0.5"
   }

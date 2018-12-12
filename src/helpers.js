@@ -38,18 +38,11 @@ export function selectBreakpoints(breakpoints, currentBreakpoint) {
   return breakpoints.slice(index)
 }
 
-export function setupListeners(mediaQueries) {
-  Object.keys(mediaQueries).map((key) => {
-    const mediaQuery = mediaQueries[key]
-    const enter = () => { reactorComponent.currentBreakpoint = key }
-    _subscribeToMediaQuery(mediaQuery, enter)
-  })
-  function _subscribeToMediaQuery(mediaQuery, enter) {
-    const mql = window.matchMedia(mediaQuery)
-    const cb = ({ matches }) => {
-      if (matches) enter()
-    }
-    mql.addListener(cb) //subscribing
-    cb(mql) //initial trigger
+export function subscribeToMediaQuery(mediaQuery, enter) {
+  const mql = window.matchMedia(mediaQuery)
+  const cb = ({ matches }) => {
+    if (matches) enter()
   }
+  mql.addListener(cb) //subscribing
+  cb(mql) //initial trigger
 }
