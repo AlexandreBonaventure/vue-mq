@@ -10,6 +10,7 @@ _
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [SSR Support](#ssr-support)
 - [Browser Support](#browser-support)
 - [Support](#support)
 
@@ -43,6 +44,7 @@ Vue.use(VueMq, {
     md: 1250,
     lg: Infinity,
   }
+  defaultBreakpoint: 'sm' // customize this for SSR
 })
 ```
 #### Use `$mq` property
@@ -112,6 +114,9 @@ In addition to `$mq` property this plugin provide a wrapper component to facilit
 mq => required : String | Array
 
 *Important*: note that you can append a `+` modifier at the end of the string to specify that the conditional rendering happens for all greater breakpoints.
+
+## SSR Support
+v1.0+ now supports SSR. You can customize the `defaultBreakpoint` which let you set the breakpoint used by the server-side-rendering 
 
 ## Browser Support
 This plugin relies on matchMedia API to detect screensize change. So for older browsers and IE, you should polyfill this out:
