@@ -27,95 +27,136 @@ describe('index.js', () => {
       return result
     })
   })
-  test('should register $mq property', () => {
-    const wrapper = shallowMount(
-      {
+  describe('plugin', () => {
+    test('should default to defaultBreakpoint in options', () => {
+      const localVue = localVueFactory({ defaultBreakpoint: 'md' })
+      const vm = new localVue({
         render (h) {
           return h('div')
         },
-      },
-      { localVue: localVueFactory() }
-    )
-    expect('$mq' in wrapper.vm).toBe(true)
-  })
-  test('should default to defaultBreakpoint in options', () => {
-    const localVue = localVueFactory({ defaultBreakpoint: 'md' })
-    const vm = new localVue({
-      render (h) {
-        return h('div')
-      },
+      })
+      expect(vm.$mq.current).toBe('md')
     })
-    expect(vm.$mq).toBe('md')
-  })
-  test('should subscribe to media queries', () => {
-    const wrapper = shallowMount(
-      {
-        render (h) {
-          return h('div')
-        },
-      },
-      { localVue: localVueFactory() }
-    )
-    expect(window.matchMedia).toBeCalledWith('(min-width: 1250px)')
-    expect(window.matchMedia).toBeCalledWith(
-      '(min-width: 450px) and (max-width: 1249px)'
-    )
-    expect(window.matchMedia).toBeCalledWith(
-      '(min-width: 0px) and (max-width: 449px)'
-    )
-  })
-  test('should set $mq accordingly when media query change', () => {
-    const wrapper = shallowMount(
-      {
-        render (h) {
-          return h('div')
-        },
-      },
-      { localVue: localVueFactory() }
-    )
-    changeMediaQuery({ type: 'screen', width: 700 })
-    expect(wrapper.vm.$mq).toBe('md')
-  })
-  test('should give $mqAvailableBreakpoints', () => {
-    const wrapper = shallowMount(
-      {
-        render (h) {
-          return h('div')
-        },
-      },
-      {
-        localVue: localVueFactory({
-          breakpoints: {
-            sm: 450,
-            md: 300,
-            lg: Infinity,
+    test('should subscribe to media queries', () => {
+      const wrapper = shallowMount(
+        {
+          render (h) {
+            return h('div')
           },
-        }),
-      }
-    )
-    expect(wrapper.vm.$mqAvailableBreakpoints).toEqual({
-      sm: 450,
-      md: 300,
-      lg: Infinity,
+        },
+        { localVue: localVueFactory() }
+      )
+      expect(window.matchMedia).toBeCalledWith('(min-width: 1250px)')
+      expect(window.matchMedia).toBeCalledWith(
+        '(min-width: 450px) and (max-width: 1249px)'
+      )
+      expect(window.matchMedia).toBeCalledWith(
+        '(min-width: 0px) and (max-width: 449px)'
+      )
     })
   })
-  // describe('change breakpoints', () => {
-  //   beforeEach(() => {})
-  //   test('should ', () => {
-  //     const wrapper = shallowMount(
-  //       {
-  //         render (h) {
-  //           return h('div')
-  //         },
-  //       },
-  //       { localVue: localVueFactory() }
-  //     )
-  //     wrapper.$mqAvailableBreakpoints = {
-  //       sm: 300,
-  //     }
-  //     expect(wrapper.vm.$mqAvailableBreakpoints).toEqual({
-  //       sm: 300,
-  //     })
-  //   })
-  // })
+  describe('$mq', () => {
+    test('should register $mq property', () => {
+      const wrapper = shallowMount(
+        {
+          render (h) {
+            return h('div')
+          },
+        },
+        { localVue: localVueFactory() }
+      )
+      expect('$mq' in wrapper.vm).toBe(true)
+    })
+    test('should set $mq.current accordingly when media query change', () => {
+      const wrapper = shallowMount(
+        {
+          render (h) {
+            return h('div')
+          },
+        },
+        { localVue: localVueFactory() }
+      )
+      changeMediaQuery({ type: 'screen', width: 700 })
+      expect(wrapper.vm.$mq.current).toBe('md')
+    })
+    test('should expose breakpoints at $mq.breakpoints', () => {
+      const wrapper = shallowMount(
+        {
+          render (h) {
+            return h('div')
+          },
+        },
+        {
+          localVue: localVueFactory({
+            breakpoints: {
+              sm: 450,
+              md: 300,
+              lg: Infinity,
+            },
+          }),
+        }
+      )
+      expect(wrapper.vm.$mq.breakpoints).toEqual({
+        sm: 450,
+        md: 300,
+        lg: Infinity,
+      })
+    })
+  })
+  describe('change breakpoints', () => {
+    beforeEach(() => {})
+    test('can mutate breakpoint', () => {
+      const wrapper = shallowMount(
+        {
+          render (h) {
+            return h('div')
+          },
+        },
+        { localVue: localVueFactory() }
+      )
+      wrapper.vm.$mq.breakpoints = {
+        sm: 300,
+      }
+      expect(wrapper.vm.$mq.breakpoints).toEqual({
+        sm: 300,
+      })
+    })
+    test('should teardown and setup listeners', async () => {
+      const wrapper = shallowMount(
+        {
+          render (h) {
+            return h('div')
+          },
+        },
+        { localVue: localVueFactory() }
+      )
+      wrapper.vm.$mqLib.setupListeners = jest.fn(
+        wrapper.vm.$mqLib.setupListeners
+      )
+      wrapper.vm.$mqLib.teardownListeners = jest.fn(
+        wrapper.vm.$mqLib.teardownListeners
+      )
+      wrapper.vm.$mq.breakpoints = {
+        sm: 300,
+      }
+      await wrapper.vm.$nextTick()
+      expect(wrapper.vm.$mqLib.teardownListeners).toBeCalled()
+      expect(wrapper.vm.$mqLib.setupListeners).toBeCalled()
+    })
+    test('should set current breakpoint', async () => {
+      const wrapper = shallowMount(
+        {
+          render (h) {
+            return h('div')
+          },
+        },
+        { localVue: localVueFactory() }
+      )
+      wrapper.vm.$mq.breakpoints = {
+        xs: 300,
+      }
+      await wrapper.vm.$nextTick()
+      expect(wrapper.vm.$mq.current).toBe('xs')
+    })
+  })
 })

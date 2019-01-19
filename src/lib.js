@@ -15,6 +15,15 @@ export default class MQ {
         currentBreakpoint: defaultBreakpoint,
         breakpoints,
       }),
+      watch: {
+        breakpoints: {
+          deep: true,
+          handler: () => {
+            this.teardownListeners()
+            this.setupListeners()
+          },
+        },
+      },
     })
   }
 
@@ -27,9 +36,32 @@ export default class MQ {
         const enter = () => {
           this.vm.currentBreakpoint = key
         }
-        subscribeToMediaQuery(mediaQuery, enter)
+        this.listeners.add(subscribeToMediaQuery(mediaQuery, enter))
       }
       this.hasSetupListeners = true
+    }
+  }
+
+  teardownListeners () {
+    for (const unsub of this.listeners) {
+      unsub()
+      this.listeners.delete(unsub)
+    }
+    this.hasSetupListeners = false
+  }
+
+  get api () {
+    const vm = this.vm
+    return {
+      get breakpoints () {
+        return vm.breakpoints
+      },
+      set breakpoints (val) {
+        vm.breakpoints = val
+      },
+      get current () {
+        return vm.currentBreakpoint
+      },
     }
   }
 }

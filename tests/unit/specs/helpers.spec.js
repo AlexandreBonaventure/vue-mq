@@ -2,7 +2,9 @@ import {
   convertBreakpointsToMediaQueries,
   transformValuesFromBreakpoints,
   selectBreakpoints,
+  subscribeToMediaQuery,
 } from '@/helpers.js'
+import MatchMediaMock from 'match-media-mock'
 
 describe('helpers.js', () => {
   test('#convertBreakpointsToMediaQueries', () => {
@@ -58,6 +60,42 @@ describe('helpers.js', () => {
       const result2 = transformValuesFromBreakpoints(breakpoints, values, 'md')
       expect(result1).toBe(1)
       expect(result2).toBe(1)
+    })
+  })
+  describe.skip('#subscribeToMediaQuery', () => {
+    beforeEach(() => {
+      const matchMediaMock = MatchMediaMock.create()
+      matchMediaMock.setConfig({ type: 'screen', width: 200 })
+      window.matchMedia = jest.fn(query => {
+        const result = matchMediaMock(query)
+        // results.add(result)
+        result.addListener = jest.fn()
+        result.removeListener = jest.fn()
+        return result
+      })
+    })
+    test('should create a match media instance', () => {
+      const callback = jest.fn()
+      const query = '(min-width: 0px) and (max-width: 349px)'
+      const result = subscribeToMediaQuery(query, callback)
+      expect(window.matchMedia).toBeCalledWith(query)
+      expect(callback).toBeCalledWith(window.matchMedia.mock.results[0].value)
+    })
+    test('should return a unsubscribe fn', () => {
+      const callback = jest.fn()
+      const query = '(min-width: 0px) and (max-width: 349px)'
+      const unsub = subscribeToMediaQuery(query, callback)
+      unsub()
+      const removeListenerSpy =
+        window.matchMedia.mock.results[0].value.removeListener
+      expect(removeListenerSpy).toBeCalledWith(callback)
+    })
+    test('should subscribe to a media query', () => {
+      const callback = jest.fn()
+      const query = '(min-width: 0px) and (max-width: 349px)'
+      subscribeToMediaQuery(query, callback)
+      const listenerSpy = window.matchMedia.mock.results[0].value.addListener
+      expect(listenerSpy).toBeCalledWith(callback)
     })
   })
 })

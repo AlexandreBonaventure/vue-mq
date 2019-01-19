@@ -25,16 +25,21 @@ const install = function (
     )
   })
   Vue.mixin({
-    computed: {
-      $mq () {
-        return mq.vm.currentBreakpoint
-      },
-    },
     beforeMount () {
       mq.setupListeners()
     },
   })
-  Vue.prototype.$mqAvailableBreakpoints = mq.vm.breakpoints
+
+  Object.defineProperty(Vue.prototype, '$mq', {
+    get () {
+      return mq.api
+    },
+  })
+  if (process.env.NODE_ENV === 'test') {
+    // expose full lib
+    Vue.prototype.$mqLib = mq
+  }
+  Vue.prototype.$mqAvailableBreakpoints = mq.vm.breakpoints // DEPRECATION
   Vue.component('MqLayout', MqLayout)
 }
 
