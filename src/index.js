@@ -1,46 +1,40 @@
-import { subscribeToMediaQuery, convertBreakpointsToMediaQueries, transformValuesFromBreakpoints } from './helpers.js'
+import { transformValuesFromBreakpoints } from './helpers.js'
+import MQ from './lib.js'
 import MqLayout from './component.js'
 
-const DEFAULT_BREAKPOINT = {
+const DEFAULT_BREAKPOINTS = {
   sm: 450,
   md: 1250,
   lg: Infinity,
 }
 
-const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT, defaultBreakpoint = 'sm' } = {}) {  
-  let hasSetupListeners = false
-  // Init reactive component
-  const reactorComponent = new Vue({
-    data: () => ({
-      currentBreakpoint: defaultBreakpoint,
-    })
+const install = function (
+  Vue,
+  { breakpoints = DEFAULT_BREAKPOINTS, defaultBreakpoint = 'sm' } = {}
+) {
+  const mq = new MQ({
+    breakpoints,
+    defaultBreakpoint,
+    Vue,
   })
   Vue.filter('mq', (currentBreakpoint, values) => {
-    return transformValuesFromBreakpoints(Object.keys(breakpoints), values, currentBreakpoint)
+    return transformValuesFromBreakpoints(
+      Object.keys(breakpoints),
+      values,
+      currentBreakpoint
+    )
   })
   Vue.mixin({
     computed: {
-      $mq() {
-        return reactorComponent.currentBreakpoint
+      $mq () {
+        return mq.vm.currentBreakpoint
       },
     },
-    created () {
-      if (this.$isServer) reactorComponent.currentBreakpoint = defaultBreakpoint
+    beforeMount () {
+      mq.setupListeners()
     },
-    mounted() {
-      if (!hasSetupListeners) {
-        const mediaQueries = convertBreakpointsToMediaQueries(breakpoints)
-        // setup listeners
-        for (const key in mediaQueries) {
-          const mediaQuery = mediaQueries[key]
-          const enter = () => { reactorComponent.currentBreakpoint = key }
-          subscribeToMediaQuery(mediaQuery, enter)
-        }
-        hasSetupListeners = true
-      }
-    }
   })
-  Vue.prototype.$mqAvailableBreakpoints = breakpoints
+  Vue.prototype.$mqAvailableBreakpoints = mq.vm.breakpoints
   Vue.component('MqLayout', MqLayout)
 }
 

@@ -1,9 +1,8 @@
-
 import {
   convertBreakpointsToMediaQueries,
   transformValuesFromBreakpoints,
-  selectBreakpoints
-} from '../../src/helpers.js'
+  selectBreakpoints,
+} from '@/helpers.js'
 
 describe('helpers.js', () => {
   test('#convertBreakpointsToMediaQueries', () => {

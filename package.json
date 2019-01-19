@@ -5,9 +5,10 @@
   "main": "dist/vue-mq.js",
   "module": "dist/vue-mq.es.js",
   "scripts": {
-    "test": "tyu -- --watch",
-    "example": "poi",
-    "build:example": "poi build",
+    "test": "vue-cli-service test:unit",
+    "lint": "vue-cli-service lint",
+    "example:serve": "poi",
+    "example:build": "poi build",
     "prepublishOnly": "yarn deploy:gh-pages",
     "deploy:gh-pages": "yarn build:example && yarn gh-pages -d examples/dist",
     "build": "npx rimraf dist && bili",
@@ -41,12 +42,19 @@
     "json2mq": "^0.2.0"
   },
   "devDependencies": {
-    "@vue/test-utils": "^1.0.0-beta.16",
+    "@vue/cli-plugin-babel": "^3.3.0",
+    "@vue/cli-plugin-eslint": "^3.3.0",
+    "@vue/cli-plugin-unit-jest": "^3.3.0",
+    "@vue/cli-service": "^3.3.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "@vue/test-utils": "1.0.0-beta.28",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.4.2",
     "bili": "^3.0.3",
     "browser-env": "^3.2.1",
     "gh-pages": "^1.1.0",
     "match-media-mock": "^0.1.1",
-    "poi": "^10.1.2",
-    "tyu": "1.0.5"
+    "vue": "^2.5.22",
+    "vue-template-compiler": "^2.5.22"
   }
 }
