@@ -15,7 +15,7 @@ const component = {
       return !isArray(this.mq) && this.mq.slice(-1) === '+'
     },
     activeBreakpoints () {
-      const breakpoints = Object.keys(this.$mqAvailableBreakpoints)
+      const breakpoints = Object.keys(this.$mq.breakpoints)
       const mq = this.plusModifier
         ? this.mq.slice(0, -1)
         : isArray(this.mq)
@@ -25,7 +25,9 @@ const component = {
     },
   },
   render (h, props) {
-    const shouldRenderChildren = this.activeBreakpoints.includes(this.$mq)
+    const shouldRenderChildren = this.activeBreakpoints.includes(
+      this.$mq.current
+    )
     return shouldRenderChildren ? h('div', this.$slots.default) : h()
   },
 }

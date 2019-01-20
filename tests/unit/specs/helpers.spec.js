@@ -62,7 +62,7 @@ describe('helpers.js', () => {
       expect(result2).toBe(1)
     })
   })
-  describe.skip('#subscribeToMediaQuery', () => {
+  describe('#subscribeToMediaQuery', () => {
     beforeEach(() => {
       const matchMediaMock = MatchMediaMock.create()
       matchMediaMock.setConfig({ type: 'screen', width: 200 })
@@ -79,23 +79,26 @@ describe('helpers.js', () => {
       const query = '(min-width: 0px) and (max-width: 349px)'
       const result = subscribeToMediaQuery(query, callback)
       expect(window.matchMedia).toBeCalledWith(query)
-      expect(callback).toBeCalledWith(window.matchMedia.mock.results[0].value)
     })
     test('should return a unsubscribe fn', () => {
       const callback = jest.fn()
       const query = '(min-width: 0px) and (max-width: 349px)'
       const unsub = subscribeToMediaQuery(query, callback)
       unsub()
+      const cb =
+        window.matchMedia.mock.results[0].value.addListener.mock.calls[0][0]
       const removeListenerSpy =
         window.matchMedia.mock.results[0].value.removeListener
-      expect(removeListenerSpy).toBeCalledWith(callback)
+      expect(removeListenerSpy).toBeCalledWith(cb)
     })
     test('should subscribe to a media query', () => {
       const callback = jest.fn()
       const query = '(min-width: 0px) and (max-width: 349px)'
       subscribeToMediaQuery(query, callback)
       const listenerSpy = window.matchMedia.mock.results[0].value.addListener
-      expect(listenerSpy).toBeCalledWith(callback)
+      expect(listenerSpy).toBeCalled()
+      listenerSpy({ matches: true })
+      expect(callback).toBeCalled()
     })
   })
 })

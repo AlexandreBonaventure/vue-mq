@@ -17,11 +17,11 @@ const install = function (
     defaultBreakpoint,
     Vue,
   })
-  Vue.filter('mq', (currentBreakpoint, values) => {
+  Vue.filter('mq', (api, values) => {
     return transformValuesFromBreakpoints(
       Object.keys(breakpoints),
       values,
-      currentBreakpoint
+      api.current
     )
   })
   Vue.mixin({

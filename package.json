@@ -7,8 +7,8 @@
   "scripts": {
     "test": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "example:serve": "poi",
-    "example:build": "poi build",
+    "example:serve": "poi --serve",
+    "example:build": "poi --prod",
     "prepublishOnly": "yarn deploy:gh-pages",
     "deploy:gh-pages": "yarn build:example && yarn gh-pages -d examples/dist",
     "build": "npx rimraf dist && bili",
@@ -26,11 +26,13 @@
   },
   "poi": {
     "entry": "examples/index.js",
-    "outDir": "examples/dist",
-    "html": {
-      "template": "examples/index.html"
-    },
-    "publicPath": "/vue-mq/"
+    "output": {
+      "html": {
+        "template": "examples/index.html"
+      },
+      "dir": "examples/dist",
+      "publicUrl": "/vue-mq/"
+    }
   },
   "author": "Alexandre Geissmann <alex@la-bonaventure.com>",
   "repository": {
@@ -54,6 +56,7 @@
     "browser-env": "^3.2.1",
     "gh-pages": "^1.1.0",
     "match-media-mock": "^0.1.1",
+    "poi": "^12.4.5",
     "vue": "^2.5.22",
     "vue-template-compiler": "^2.5.22"
   }
