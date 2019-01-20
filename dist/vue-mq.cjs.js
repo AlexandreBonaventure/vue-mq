@@ -2,11 +2,35 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+var keys = _interopDefault(require('core-js/library/fn/object/keys'));
+var defineProperty = _interopDefault(require('core-js/library/fn/object/define-property'));
+var assign = _interopDefault(require('core-js/library/fn/object/assign'));
+var isArray = _interopDefault(require('core-js/library/fn/array/is-array'));
+var from = _interopDefault(require('core-js/library/fn/array/from'));
+var isIterable = _interopDefault(require('core-js/library/fn/is-iterable'));
+require('core-js/modules/es6.array.find-index');
+require('core-js/modules/es6.array.reduce');
+require('core-js/modules/es6.array.map');
 var json2mq = _interopDefault(require('json2mq'));
+var getIterator = _interopDefault(require('core-js/library/fn/get-iterator'));
+var set = _interopDefault(require('core-js/library/fn/set'));
+require('core-js/modules/es6.regexp.to-string');
+require('core-js/modules/es6.date.to-string');
+require('core-js/modules/es7.array.includes');
+require('core-js/modules/es6.string.includes');
+require('core-js/modules/es6.object.define-property');
+require('core-js/modules/es6.array.filter');
+require('core-js/modules/es6.array.iterator');
+require('core-js/modules/es6.promise');
+require('core-js/modules/es7.promise.finally');
+
+var keys$1 = keys;
+
+var defineProperty$1 = defineProperty;
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
-    Object.defineProperty(obj, key, {
+    defineProperty$1(obj, key, {
       value: value,
       enumerable: true,
       configurable: true,
@@ -19,36 +43,61 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-function _toConsumableArray(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+var assign$1 = assign;
+
+var isArray$1 = isArray;
+
+function _arrayWithoutHoles(arr) {
+  if (isArray$1(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
 
     return arr2;
-  } else {
-    return Array.from(arr);
   }
 }
 
+var from_1 = from;
+
+var isIterable$1 = isIterable;
+
+function _iterableToArray(iter) {
+  if (isIterable$1(Object(iter)) || Object.prototype.toString.call(iter) === "[object Arguments]") return from_1(iter);
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
 function convertBreakpointsToMediaQueries(breakpoints) {
-  var keys = Object.keys(breakpoints);
-  var values = keys.map(function (key) {
+  var keys$$1 = keys$1(breakpoints);
+
+  var values = keys$$1.map(function (key) {
     return breakpoints[key];
   });
   var breakpointValues = [0].concat(_toConsumableArray(values.slice(0, -1)));
   var mediaQueries = breakpointValues.reduce(function (sum, value, index) {
-    var options = Object.assign({
+    var options = assign$1({
       minWidth: value
-    }, index < keys.length - 1 ? {
+    }, index < keys$$1.length - 1 ? {
       maxWidth: breakpointValues[index + 1] - 1
     } : {});
+
     var mediaQuery = json2mq(options);
-    return Object.assign(sum, _defineProperty({}, keys[index], mediaQuery));
+    return assign$1(sum, _defineProperty({}, keys$$1[index], mediaQuery));
   }, {});
   return mediaQueries;
 }
 function transformValuesFromBreakpoints(breakpoints, values, currentBreakpoint) {
   var findClosestValue = function findClosestValue(currentBreakpoint) {
-    if (values[currentBreakpoint] !== undefined) return values[currentBreakpoint];
+    if (values[currentBreakpoint] !== undefined) {
+      return values[currentBreakpoint];
+    }
+
     var index = breakpoints.findIndex(function (b) {
       return b === currentBreakpoint;
     });
@@ -73,18 +122,164 @@ function subscribeToMediaQuery(mediaQuery, enter) {
     if (matches) enter();
   };
 
-  mql.addListener(cb); //subscribing
+  mql.addListener(cb); // subscribing
 
-  cb(mql); //initial trigger
+  cb(mql); // initial trigger
+
+  return function () {
+    return mql.removeListener(cb);
+  }; // return unsubscribtion
 }
 
-function isArray(arg) {
+var getIterator$1 = getIterator;
+
+var set$1 = set;
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+
+    defineProperty$1(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+var MQ =
+/*#__PURE__*/
+function () {
+  function MQ(_ref) {
+    var _this = this;
+
+    var breakpoints = _ref.breakpoints,
+        defaultBreakpoint = _ref.defaultBreakpoint,
+        Vue = _ref.Vue;
+
+    _classCallCheck(this, MQ);
+
+    _defineProperty(this, "hasSetupListeners", false);
+
+    _defineProperty(this, "listeners", new set$1());
+
+    _defineProperty(this, "vm", null);
+
+    // Init reactive component
+    this.vm = new Vue({
+      data: function data() {
+        return {
+          currentBreakpoint: defaultBreakpoint,
+          breakpoints: breakpoints
+        };
+      },
+      watch: {
+        breakpoints: {
+          deep: true,
+          handler: function handler() {
+            _this.teardownListeners();
+
+            _this.setupListeners();
+          }
+        }
+      }
+    });
+  }
+
+  _createClass(MQ, [{
+    key: "setupListeners",
+    value: function setupListeners() {
+      var _this2 = this;
+
+      if (!this.hasSetupListeners) {
+        var mediaQueries = convertBreakpointsToMediaQueries(this.vm.breakpoints); // setup listeners
+
+        var _loop = function _loop(key) {
+          var mediaQuery = mediaQueries[key];
+
+          var enter = function enter() {
+            _this2.vm.currentBreakpoint = key;
+          };
+
+          _this2.listeners.add(subscribeToMediaQuery(mediaQuery, enter));
+        };
+
+        for (var key in mediaQueries) {
+          _loop(key);
+        }
+
+        this.hasSetupListeners = true;
+      }
+    }
+  }, {
+    key: "teardownListeners",
+    value: function teardownListeners() {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = getIterator$1(this.listeners), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var unsub = _step.value;
+          unsub();
+          this.listeners.delete(unsub);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      this.hasSetupListeners = false;
+    }
+  }, {
+    key: "api",
+    get: function get() {
+      var vm = this.vm;
+      return {
+        get breakpoints() {
+          return vm.breakpoints;
+        },
+
+        set breakpoints(val) {
+          vm.breakpoints = val;
+        },
+
+        get current() {
+          return vm.currentBreakpoint;
+        }
+
+      };
+    }
+  }]);
+
+  return MQ;
+}();
+
+function isArray$2(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
 }
 
-// USAGE
-// mq-layout(mq="lg")
-//   p I’m lg
 var component = {
   props: {
     mq: {
@@ -94,21 +289,22 @@ var component = {
   },
   computed: {
     plusModifier: function plusModifier() {
-      return !isArray(this.mq) && this.mq.slice(-1) === '+';
+      return !isArray$2(this.mq) && this.mq.slice(-1) === '+';
     },
     activeBreakpoints: function activeBreakpoints() {
-      var breakpoints = Object.keys(this.$mqAvailableBreakpoints);
-      var mq = this.plusModifier ? this.mq.slice(0, -1) : isArray(this.mq) ? this.mq : [this.mq];
+      var breakpoints = keys$1(this.$mq.breakpoints);
+
+      var mq = this.plusModifier ? this.mq.slice(0, -1) : isArray$2(this.mq) ? this.mq : [this.mq];
       return this.plusModifier ? selectBreakpoints(breakpoints, mq) : mq;
     }
   },
   render: function render(h, props) {
-    var shouldRenderChildren = this.activeBreakpoints.includes(this.$mq);
+    var shouldRenderChildren = this.activeBreakpoints.includes(this.$mq.current);
     return shouldRenderChildren ? h('div', this.$slots.default) : h();
   }
 };
 
-var DEFAULT_BREAKPOINT = {
+var DEFAULT_BREAKPOINTS = {
   sm: 450,
   md: 1250,
   lg: Infinity
@@ -117,54 +313,36 @@ var DEFAULT_BREAKPOINT = {
 var install = function install(Vue) {
   var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
       _ref$breakpoints = _ref.breakpoints,
-      breakpoints = _ref$breakpoints === void 0 ? DEFAULT_BREAKPOINT : _ref$breakpoints,
+      breakpoints = _ref$breakpoints === void 0 ? DEFAULT_BREAKPOINTS : _ref$breakpoints,
       _ref$defaultBreakpoin = _ref.defaultBreakpoint,
       defaultBreakpoint = _ref$defaultBreakpoin === void 0 ? 'sm' : _ref$defaultBreakpoin;
 
-  var hasSetupListeners = false; // Init reactive component
-
-  var reactorComponent = new Vue({
-    data: function data() {
-      return {
-        currentBreakpoint: defaultBreakpoint
-      };
-    }
+  var mq = new MQ({
+    breakpoints: breakpoints,
+    defaultBreakpoint: defaultBreakpoint,
+    Vue: Vue
   });
-  Vue.filter('mq', function (currentBreakpoint, values) {
-    return transformValuesFromBreakpoints(Object.keys(breakpoints), values, currentBreakpoint);
+  Vue.filter('mq', function (api, values) {
+    return transformValuesFromBreakpoints(keys$1(breakpoints), values, api.current);
   });
   Vue.mixin({
-    computed: {
-      $mq: function $mq() {
-        return reactorComponent.currentBreakpoint;
-      }
-    },
-    created: function created() {
-      if (this.$isServer) reactorComponent.currentBreakpoint = defaultBreakpoint;
-    },
-    mounted: function mounted() {
-      if (!hasSetupListeners) {
-        var mediaQueries = convertBreakpointsToMediaQueries(breakpoints); // setup listeners
-
-        var _loop = function _loop(key) {
-          var mediaQuery = mediaQueries[key];
-
-          var enter = function enter() {
-            reactorComponent.currentBreakpoint = key;
-          };
-
-          subscribeToMediaQuery(mediaQuery, enter);
-        };
-
-        for (var key in mediaQueries) {
-          _loop(key);
-        }
-
-        hasSetupListeners = true;
-      }
+    beforeMount: function beforeMount() {
+      mq.setupListeners();
     }
   });
-  Vue.prototype.$mqAvailableBreakpoints = breakpoints;
+  Object.defineProperty(Vue.prototype, '$mq', {
+    get: function get() {
+      return mq.api;
+    }
+  });
+
+  if (process.env.NODE_ENV === 'test') {
+    // expose full lib
+    Vue.prototype.$mqLib = mq;
+  }
+
+  Vue.prototype.$mqAvailableBreakpoints = mq.vm.breakpoints; // DEPRECATION
+
   Vue.component('MqLayout', component);
 };
 
