@@ -1,32 +1,30 @@
-import keys from 'core-js/library/fn/object/keys';
-import defineProperty from 'core-js/library/fn/object/define-property';
-import assign from 'core-js/library/fn/object/assign';
-import isArray from 'core-js/library/fn/array/is-array';
-import from from 'core-js/library/fn/array/from';
-import isIterable from 'core-js/library/fn/is-iterable';
-import 'core-js/modules/es6.array.find-index';
-import 'core-js/modules/es6.array.reduce';
-import 'core-js/modules/es6.array.map';
-import json2mq from 'json2mq';
-import getIterator from 'core-js/library/fn/get-iterator';
-import set from 'core-js/library/fn/set';
-import 'core-js/modules/es6.regexp.to-string';
-import 'core-js/modules/es6.date.to-string';
-import 'core-js/modules/es7.array.includes';
-import 'core-js/modules/es6.string.includes';
-import 'core-js/modules/es6.object.define-property';
-import 'core-js/modules/es6.array.filter';
-import 'core-js/modules/es6.array.iterator';
-import 'core-js/modules/es6.promise';
-import 'core-js/modules/es7.promise.finally';
+'use strict';
 
-var keys$1 = keys;
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
 
-var defineProperty$1 = defineProperty;
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
-    defineProperty$1(obj, key, {
+    Object.defineProperty(obj, key, {
       value: value,
       enumerable: true,
       configurable: true,
@@ -39,52 +37,100 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-var assign$1 = assign;
-
-var isArray$1 = isArray;
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
 
 function _arrayWithoutHoles(arr) {
-  if (isArray$1(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
 
     return arr2;
   }
 }
 
-var from_1 = from;
-
-var isIterable$1 = isIterable;
-
 function _iterableToArray(iter) {
-  if (isIterable$1(Object(iter)) || Object.prototype.toString.call(iter) === "[object Arguments]") return from_1(iter);
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
 }
 
 function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance");
 }
 
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-}
+var camel2hyphen = function (str) {
+  return str
+          .replace(/[A-Z]/g, function (match) {
+            return '-' + match.toLowerCase();
+          })
+          .toLowerCase();
+};
+
+var camel2hyphen_1 = camel2hyphen;
+
+var isDimension = function (feature) {
+  var re = /[height|width]$/;
+  return re.test(feature);
+};
+
+var obj2mq = function (obj) {
+  var mq = '';
+  var features = Object.keys(obj);
+  features.forEach(function (feature, index) {
+    var value = obj[feature];
+    feature = camel2hyphen_1(feature);
+    // Add px to dimension features
+    if (isDimension(feature) && typeof value === 'number') {
+      value = value + 'px';
+    }
+    if (value === true) {
+      mq += feature;
+    } else if (value === false) {
+      mq += 'not ' + feature;
+    } else {
+      mq += '(' + feature + ': ' + value + ')';
+    }
+    if (index < features.length-1) {
+      mq += ' and ';
+    }
+  });
+  return mq;
+};
+
+var json2mq = function (query) {
+  var mq = '';
+  if (typeof query === 'string') {
+    return query;
+  }
+  // Handling array of media queries
+  if (query instanceof Array) {
+    query.forEach(function (q, index) {
+      mq += obj2mq(q);
+      if (index < query.length-1) {
+        mq += ', ';
+      }
+    });
+    return mq;
+  }
+  // Handling single media query
+  return obj2mq(query);
+};
+
+var json2mq_1 = json2mq;
 
 function convertBreakpointsToMediaQueries(breakpoints) {
-  var keys$$1 = keys$1(breakpoints);
-
-  var values = keys$$1.map(function (key) {
+  var keys = Object.keys(breakpoints);
+  var values = keys.map(function (key) {
     return breakpoints[key];
   });
   var breakpointValues = [0].concat(_toConsumableArray(values.slice(0, -1)));
   var mediaQueries = breakpointValues.reduce(function (sum, value, index) {
-    var options = assign$1({
+    var options = Object.assign({
       minWidth: value
-    }, index < keys$$1.length - 1 ? {
+    }, index < keys.length - 1 ? {
       maxWidth: breakpointValues[index + 1] - 1
     } : {});
-
-    var mediaQuery = json2mq(options);
-    return assign$1(sum, _defineProperty({}, keys$$1[index], mediaQuery));
+    var mediaQuery = json2mq_1(options);
+    return Object.assign(sum, _defineProperty({}, keys[index], mediaQuery));
   }, {});
   return mediaQueries;
 }
@@ -98,7 +144,7 @@ function transformValuesFromBreakpoints(breakpoints, values, currentBreakpoint) 
       return b === currentBreakpoint;
     });
     var newBreakpoint = index !== -1 || index !== 0 ? breakpoints[index - 1] : null;
-    if (!newBreakpoint) return values[index];
+    if (!newBreakpoint) { return values[index]; }
     return values[newBreakpoint] !== undefined ? values[newBreakpoint] : findClosestValue(newBreakpoint);
   };
 
@@ -115,7 +161,7 @@ function subscribeToMediaQuery(mediaQuery, enter) {
 
   var cb = function cb(_ref) {
     var matches = _ref.matches;
-    if (matches) enter();
+    if (matches) { enter(); }
   };
 
   mql.addListener(cb); // subscribing
@@ -125,33 +171,6 @@ function subscribeToMediaQuery(mediaQuery, enter) {
   return function () {
     return mql.removeListener(cb);
   }; // return unsubscribtion
-}
-
-var getIterator$1 = getIterator;
-
-var set$1 = set;
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-
-    defineProperty$1(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
 }
 
 var MQ =
@@ -168,7 +187,7 @@ function () {
 
     _defineProperty(this, "hasSetupListeners", false);
 
-    _defineProperty(this, "listeners", new set$1());
+    _defineProperty(this, "listeners", new Set());
 
     _defineProperty(this, "vm", null);
 
@@ -226,7 +245,7 @@ function () {
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = getIterator$1(this.listeners), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        for (var _iterator = this.listeners[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var unsub = _step.value;
           unsub();
           this.listeners.delete(unsub);
@@ -272,10 +291,11 @@ function () {
   return MQ;
 }();
 
-function isArray$2(arg) {
+function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
 }
 
+// USAGE
 var component = {
   props: {
     mq: {
@@ -285,12 +305,11 @@ var component = {
   },
   computed: {
     plusModifier: function plusModifier() {
-      return !isArray$2(this.mq) && this.mq.slice(-1) === '+';
+      return !isArray(this.mq) && this.mq.slice(-1) === '+';
     },
     activeBreakpoints: function activeBreakpoints() {
-      var breakpoints = keys$1(this.$mq.breakpoints);
-
-      var mq = this.plusModifier ? this.mq.slice(0, -1) : isArray$2(this.mq) ? this.mq : [this.mq];
+      var breakpoints = Object.keys(this.$mq.breakpoints);
+      var mq = this.plusModifier ? this.mq.slice(0, -1) : isArray(this.mq) ? this.mq : [this.mq];
       return this.plusModifier ? selectBreakpoints(breakpoints, mq) : mq;
     }
   },
@@ -319,7 +338,7 @@ var install = function install(Vue) {
     Vue: Vue
   });
   Vue.filter('mq', function (api, values) {
-    return transformValuesFromBreakpoints(keys$1(breakpoints), values, api.current);
+    return transformValuesFromBreakpoints(Object.keys(breakpoints), values, api.current);
   });
   Vue.mixin({
     beforeMount: function beforeMount() {
@@ -346,4 +365,4 @@ var index = {
   install: install
 };
 
-export default index;
+module.exports = index;

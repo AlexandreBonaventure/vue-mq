@@ -11,17 +11,24 @@
     "example:build": "poi --prod",
     "prepublishOnly": "yarn deploy:gh-pages",
     "deploy:gh-pages": "yarn example:build && yarn gh-pages -d examples/dist",
-    "build": "npx rimraf dist && bili",
+    "build": "npx rimraf dist && bili --verbose",
     "release": "yarn test && yarn build && npx release-it --no-requireCleanWorkingDir"
   },
   "bili": {
-    "moduleName": "vueMq",
-    "format": [
-      "cjs",
-      "umd",
-      "umd-min",
-      "es"
-    ],
+    "bundleNodeModules": true,
+    "output": {
+      "moduleName": "vueMq",
+      "format": [
+        "cjs",
+        "umd",
+        "umd-min",
+        "es"
+      ]
+    },
+    "babel": {
+      "configFile": "./babel.config.build.js",
+      "minimal": true
+    },
     "external": "vue"
   },
   "poi": {
@@ -44,6 +51,7 @@
     "json2mq": "^0.2.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.3.0",
     "@vue/cli-plugin-babel": "^3.3.0",
     "@vue/cli-plugin-eslint": "^3.3.0",
     "@vue/cli-plugin-unit-jest": "^3.3.0",
@@ -52,7 +60,7 @@
     "@vue/test-utils": "1.0.0-beta.28",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.4.2",
-    "bili": "^3.4.2",
+    "bili": "^4.1.0",
     "browser-env": "^3.2.1",
     "gh-pages": "^1.1.0",
     "match-media-mock": "^0.1.1",
