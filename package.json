@@ -1,9 +1,14 @@
 {
   "name": "vue-mq",
-  "version": "1.0.1",
+  "version": "2.0.0-beta.0",
   "description": "Handle media queries easily & build responsive design with Vue",
-  "main": "dist/vue-mq.js",
-  "module": "dist/vue-mq.es.js",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "unpkg": "dist/index.umd.min.js",
+  "jsdelivr": "dist/index.umd.min.js",
   "scripts": {
     "test": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
@@ -60,7 +65,7 @@
     "@vue/test-utils": "1.0.0-beta.28",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.4.2",
-    "bili": "^4.1.0",
+    "bili": "^4.2.5",
     "browser-env": "^3.2.1",
     "gh-pages": "^1.1.0",
     "match-media-mock": "^0.1.1",
