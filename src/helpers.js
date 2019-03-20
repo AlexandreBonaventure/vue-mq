@@ -2,6 +2,7 @@ import json2mq from 'json2mq'
 
 export function convertBreakpointsToMediaQueries(breakpoints) {
   const keys = Object.keys(breakpoints)
+  keys.sort((a,b) => breakpoints[a]-breakpoints[b])
   const values = keys.map(key => breakpoints[key])
   const breakpointValues = [0, ...values.slice(0, -1)]
   const mediaQueries = breakpointValues.reduce((sum, value, index) => {
