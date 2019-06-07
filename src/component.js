@@ -8,7 +8,8 @@ const component = {
     mq: {
       required: true,
       type: [String, Array],
-    }
+    },
+    createContainer: { type: Boolean, default: false }
   },
   computed: {
     plusModifier() { return !isArray(this.mq) && this.mq.slice(-1) === '+' },
@@ -22,7 +23,7 @@ const component = {
   },
   render(h, props) {
     const shouldRenderChildren = this.activeBreakpoints.includes(this.$mq)
-    return shouldRenderChildren ? h('div', this.$slots.default) : h()
+    return shouldRenderChildren ? (this.createContainer ? h('div', this.$slots.default) : this.$slots.default) : h()
   },
 }
 

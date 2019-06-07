@@ -1,6 +1,6 @@
 {
   "name": "vue-mq",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Handle media queries easily & build responsive design with Vue",
   "main": "dist/vue-mq.js",
   "module": "dist/vue-mq.es.js",
