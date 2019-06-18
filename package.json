@@ -41,12 +41,16 @@
     "json2mq": "^0.2.0"
   },
   "devDependencies": {
+    "@vue/server-test-utils": "^1.0.0-beta.29",
     "@vue/test-utils": "^1.0.0-beta.16",
     "bili": "^3.0.3",
     "browser-env": "^3.2.1",
     "gh-pages": "^1.1.0",
     "match-media-mock": "^0.1.1",
     "poi": "^10.1.2",
-    "tyu": "1.0.5"
+    "tyu": "1.0.5",
+    "vue": "^2.x",
+    "vue-server-renderer": "^2.x",
+    "vue-template-compiler": "^2.x"
   }
 }

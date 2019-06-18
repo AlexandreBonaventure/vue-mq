@@ -7,13 +7,23 @@ const DEFAULT_BREAKPOINT = {
   lg: Infinity,
 }
 
-const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT, defaultBreakpoint = 'sm' } = {}) {  
+const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT, defaultBreakpoint = 'sm' } = {}) {
   let hasSetupListeners = false
   // Init reactive component
   const reactorComponent = new Vue({
     data: () => ({
+      defaultBreakpoint: defaultBreakpoint,
       currentBreakpoint: defaultBreakpoint,
-    })
+    }),
+    methods: {
+      update(breakpoint, type = 'currentBreakpoint') {
+        const isTypeValid = Object.keys(this.$data).includes(type)
+        const isBreakPointValid = Object.keys(breakpoints).includes(breakpoint)
+        if (isTypeValid && isBreakPointValid) {
+          this.$data[type] = breakpoint
+        }
+      }
+    }
   })
   Vue.filter('mq', (currentBreakpoint, values) => {
     return transformValuesFromBreakpoints(Object.keys(breakpoints), values, currentBreakpoint)
@@ -25,7 +35,7 @@ const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT, defaultBreakp
       },
     },
     created () {
-      if (this.$isServer) reactorComponent.currentBreakpoint = defaultBreakpoint
+      if (this.$isServer) reactorComponent.currentBreakpoint = reactorComponent.defaultBreakpoint
     },
     mounted() {
       if (!hasSetupListeners) {
@@ -41,6 +51,10 @@ const install = function (Vue, { breakpoints = DEFAULT_BREAKPOINT, defaultBreakp
     }
   })
   Vue.prototype.$mqAvailableBreakpoints = breakpoints
+  Vue.prototype.$mqUpdateCurrentBreakpoint = breakpoint =>
+    reactorComponent.update(breakpoint, 'currentBreakpoint')
+  Vue.prototype.$mqUpdateDefaultBreakpoint = breakpoint =>
+    reactorComponent.update(breakpoint, 'defaultBreakpoint')
   Vue.component('MqLayout', MqLayout)
 }
 

@@ -20,13 +20,23 @@ function _defineProperty(obj, key, value) {
 }
 
 function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _arrayWithoutHoles(arr) {
   if (Array.isArray(arr)) {
     for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
 
     return arr2;
-  } else {
-    return Array.from(arr);
   }
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
 }
 
 function convertBreakpointsToMediaQueries(breakpoints) {
@@ -83,8 +93,6 @@ function isArray(arg) {
 }
 
 // USAGE
-// mq-layout(mq="lg")
-//   p I’m lg
 var component = {
   props: {
     mq: {
@@ -126,8 +134,20 @@ var install = function install(Vue) {
   var reactorComponent = new Vue({
     data: function data() {
       return {
+        defaultBreakpoint: defaultBreakpoint,
         currentBreakpoint: defaultBreakpoint
       };
+    },
+    methods: {
+      update: function update(breakpoint) {
+        var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'currentBreakpoint';
+        var isTypeValid = Object.keys(this.$data).includes(type);
+        var isBreakPointValid = Object.keys(breakpoints).includes(breakpoint);
+
+        if (isTypeValid && isBreakPointValid) {
+          this.$data[type] = breakpoint;
+        }
+      }
     }
   });
   Vue.filter('mq', function (currentBreakpoint, values) {
@@ -140,7 +160,7 @@ var install = function install(Vue) {
       }
     },
     created: function created() {
-      if (this.$isServer) reactorComponent.currentBreakpoint = defaultBreakpoint;
+      if (this.$isServer) reactorComponent.currentBreakpoint = reactorComponent.defaultBreakpoint;
     },
     mounted: function mounted() {
       if (!hasSetupListeners) {
@@ -165,6 +185,15 @@ var install = function install(Vue) {
     }
   });
   Vue.prototype.$mqAvailableBreakpoints = breakpoints;
+
+  Vue.prototype.$mqUpdateCurrentBreakpoint = function (breakpoint) {
+    return reactorComponent.update(breakpoint, 'currentBreakpoint');
+  };
+
+  Vue.prototype.$mqUpdateDefaultBreakpoint = function (breakpoint) {
+    return reactorComponent.update(breakpoint, 'defaultBreakpoint');
+  };
+
   Vue.component('MqLayout', component);
 };
 

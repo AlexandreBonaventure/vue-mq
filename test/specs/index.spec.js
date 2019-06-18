@@ -1,6 +1,7 @@
 import plugin from '../../src/index.js'
 import Vue from 'vue'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { render } from '@vue/server-test-utils'
 import MatchMediaMock from 'match-media-mock'
 
 const localVueFactory = (options) => {
@@ -11,7 +12,7 @@ const localVueFactory = (options) => {
 
 describe('index.js', () => {
   let results
-  let matchMediaMock  
+  let matchMediaMock
   beforeEach(() => {
     results = new Set()
     matchMediaMock = MatchMediaMock.create()
@@ -28,8 +29,8 @@ describe('index.js', () => {
   })
   test('should default to defaultBreakpoint in options', () => {
     const localVue = localVueFactory({ defaultBreakpoint: 'md' })
-    const vm = new localVue({ 
-      render(h) { return h('div') } 
+    const vm = new localVue({
+      render(h) { return h('div') }
     })
     expect(vm.$mq).toBe('md')
   })
@@ -44,5 +45,13 @@ describe('index.js', () => {
     matchMediaMock.setConfig({type: 'screen', width: 700})
     Array.from(results)[1].callListeners()
     expect(wrapper.vm.$mq).toBe('md')
+  })
+  test('should update currentBreakpoint with instance method', () => {
+    const localVue = localVueFactory({ defaultBreakpoint: 'md' })
+    const vm = new localVue({
+      render(h) { return h('div') }
+    })
+    vm.$mqUpdateCurrentBreakpoint('lg')
+    expect(vm.$mq).toBe('lg')
   })
 })
