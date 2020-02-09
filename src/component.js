@@ -8,6 +8,11 @@ const component = {
     mq: {
       required: true,
       type: [String, Array],
+    },
+    tag: {
+      required: true,
+      type: String,
+      default: 'div'
     }
   },
   computed: {
@@ -22,7 +27,7 @@ const component = {
   },
   render(h, props) {
     const shouldRenderChildren = this.activeBreakpoints.includes(this.$mq)
-    return shouldRenderChildren ? h('div', this.$slots.default) : h()
+    return shouldRenderChildren ? h(this.tag, this.$slots.default) : h()
   },
 }
 

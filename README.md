@@ -111,8 +111,9 @@ In addition to `$mq` property this plugin provide a wrapper component to facilit
   <span> Display on sm and lg </span>
 </mq-layout>
 ```
-**Props**
-mq => required : String | Array
+**Props**: 
+`mq`: (required) String | Array 
+`tag`: (required) String, default to `div`
 
 *Important*: note that you can append a `+` modifier at the end of the string to specify that the conditional rendering happens for all greater breakpoints.
 
