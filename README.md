@@ -115,7 +115,7 @@ In addition to `$mq` property this plugin provide a wrapper component to facilit
 `mq`: (required) String | Array  
 `tag`: (required) String, default to `div`
 
-*Important*: note that you can append a `+` modifier at the end of the string to specify that the conditional rendering happens for all greater breakpoints.
+*Important*: note that you can append a `+` modifier at the end of the `mq` string to specify that the conditional rendering happens for all greater breakpoints.
 
 ## SSR Support
 v1.0+ now supports SSR. You can customize the `defaultBreakpoint` which let you set the breakpoint used by the server-side-rendering 
