@@ -44,7 +44,7 @@ Vue.use(VueMq, {
     sm: 450,
     md: 1250,
     lg: Infinity,
-  }
+  },
   defaultBreakpoint: 'sm' // customize this for SSR
 })
 ```
